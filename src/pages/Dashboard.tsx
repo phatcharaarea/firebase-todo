@@ -9,51 +9,59 @@ export default function Dashboard() {
     navigate("/login");
   };
   const today = new Date();
-  const [currentMonth, setCurrentMonth] = useState(today.getMonth()); // 0-11
+  const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
 
-  const getDaysInMonth = (year: number, month: number) => {
-    return new Date(year, month + 1, 0).getDate(); // วันสุดท้ายของเดือน
-  };
+  const getDaysInMonth = (year: number, month: number) =>
+    new Date(year, month + 1, 0).getDate();
 
-  const getStartDayOfMonth = (year: number, month: number) => {
-    return new Date(year, month, 1).getDay(); // index 0-6
-  };
+  const getStartDay = (year: number, month: number) =>
+    new Date(year, month, 1).getDay();
 
   const totalDays = getDaysInMonth(currentYear, currentMonth);
-  const startDay = getStartDayOfMonth(currentYear, currentMonth);
+  const startDay = getStartDay(currentYear, currentMonth);
 
-  // สร้าง array ของวันในปฏิทิน (รวมช่องว่างก่อนวันจริง)
-  const calendarDays: (number | null)[] = Array(startDay).fill(null).concat(
+  const days: (number | null)[] = Array(startDay).fill(null).concat(
     Array.from({ length: totalDays }, (_, i) => i + 1)
   );
 
-  // เต็ม 42 ช่อง (7x6)
-  while (calendarDays.length < 42) calendarDays.push(null);
+  while (days.length < 42) days.push(null); // เต็ม 6 แถว
 
   return (
-    <div className="p-6 max-w-md mx-auto">
-      {/* Tab Bar */}
-      <div className="flex justify-center mb-4 space-x-2">
-        <button className="border px-4 py-1 rounded bg-gray-100 font-medium">Year</button>
-        <button className="border px-4 py-1 rounded bg-gray-200 font-medium">Month</button>
-        <button className="border px-4 py-1 rounded bg-gray-100 font-medium">Day</button>
+      <div className="h-screen flex flex-col">
+      {/* Header */}
+      <div className="py-4 text-center text-2xl font-bold">📅 ปฏิทินรายเดือน</div>
+
+      {/* Tab Controls */}
+      <div className="flex justify-center gap-3 mb-2">
+        <button className="px-3 py-1 rounded bg-gray-100 text-sm">ปี</button>
+        <button className="px-3 py-1 rounded bg-blue-100 text-sm font-semibold">เดือน</button>
+        <button className="px-3 py-1 rounded bg-gray-100 text-sm">วัน</button>
       </div>
 
-      {/* Weekdays */}
-      <div className="grid grid-cols-7 text-center font-semibold text-gray-600 mb-1">
-        {WEEKDAYS.map((day, idx) => (
-          <div key={idx}>{day}</div>
-        ))}
-      </div>
+      {/* Calendar */}
+      <div className="flex-1 grid grid-rows-[auto,1fr] max-w-[100vw] px-2">
+        {/* Weekday Header */}
+        <div className="grid grid-cols-7 text-center font-medium text-sm text-gray-700 border-b border-gray-300">
+          {WEEKDAYS.map((day, idx) => (
+            <div key={idx} className="py-2">{day}</div>
+          ))}
+        </div>
 
-      {/* Calendar Grid */}
-      <div className="grid grid-cols-7 text-center gap-y-2">
-        {calendarDays.map((day, idx) => (
-          <div key={idx} className="h-10 flex items-center justify-center text-sm text-gray-800">
-            {day ? day : ""}
-          </div>
-        ))}
+        {/* Calendar Grid */}
+        <div className="grid grid-cols-7 grid-rows-6 gap-px bg-gray-300 h-full border-t border-gray-300">
+          {days.map((day, index) => (
+            <div
+              key={index}
+              className={`bg-white flex items-center justify-center text-sm 
+                hover:bg-blue-100 cursor-pointer select-none
+                ${day ? 'text-gray-900' : 'text-transparent'}`}
+              onClick={() => day && alert(`ดูรายการวันที่ ${day}/${currentMonth + 1}/${currentYear}`)}
+            >
+              {day || "."}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
     // <div className="p-8">
